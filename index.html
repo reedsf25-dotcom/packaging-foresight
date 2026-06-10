@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Market Insight &amp; Foresight — DS Smith</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#f4f5f7;color:#23272f;line-height:1.6;-webkit-font-smoothing:antialiased}
+:root{--ds-red:#C7352D;--ds-red-dark:#8c231d;--ds-orange:#E7AE40;--ds-grey:#4D4D4D;--ds-red-light:rgba(199,53,45,0.08);--ds-orange-light:rgba(231,174,64,0.10)}
+.dashboard-header{background:linear-gradient(135deg,var(--ds-red) 0%,var(--ds-orange) 100%);color:#fff;padding:2.2rem 2rem 1.8rem;text-align:center}
+.dashboard-logo{margin-bottom:0.6rem}.dashboard-logo img{height:38px;background:#fff;padding:5px 10px;border-radius:6px}
+.dashboard-header h1{font-size:1.85rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:0.3rem}
+.dashboard-header .subtitle{font-size:1rem;color:rgba(255,255,255,0.85);font-weight:400}
+.meta-bar{display:flex;flex-wrap:wrap;justify-content:center;gap:1.2rem;margin-top:1.2rem}
+.meta-item{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.20);border-radius:8px;padding:0.45rem 1rem;font-size:0.84rem;color:rgba(255,255,255,0.9)}
+.meta-item strong{color:#fff}
+.tab-nav{display:flex;justify-content:center;background:#fff;border-bottom:2px solid #e5e7eb;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,0.06)}
+.tab-btn{padding:0.9rem 2rem;font-size:0.95rem;font-weight:600;color:#6b7280;background:none;border:none;border-bottom:3px solid transparent;cursor:pointer;transition:all 0.2s;font-family:inherit}
+.tab-btn:hover{color:var(--ds-red)}.tab-btn.active{color:var(--ds-red);border-bottom-color:var(--ds-red)}
+.container{max-width:960px;margin:0 auto;padding:2rem 1.25rem 3rem}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* PAGE 1 */
+.hero-box{background:linear-gradient(135deg,#fef2f1 0%,#fff8f0 100%);border:1px solid rgba(199,53,45,0.15);border-radius:12px;padding:2.2rem 2rem;margin-bottom:2.5rem;position:relative;overflow:hidden}
+.hero-box::before{content:"";position:absolute;top:0;left:0;width:5px;height:100%;background:linear-gradient(180deg,var(--ds-red),var(--ds-orange))}
+.hero-box h2{font-size:1.4rem;color:var(--ds-red);margin-bottom:1rem;padding-left:0.5rem}
+.hero-narrative{font-size:1.02rem;font-style:italic;color:#3d4550;line-height:1.75;padding-left:0.5rem;margin-bottom:1rem}
+.hero-cta{display:inline-block;margin-top:0.5rem;margin-left:0.5rem;padding:0.6rem 1.5rem;background:var(--ds-red);color:#fff;border-radius:6px;text-decoration:none;font-size:0.9rem;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:background 0.2s}
+.hero-cta:hover{background:var(--ds-red-dark)}
+.content-card{background:#fff;border-radius:10px;padding:1.8rem 2rem;margin-bottom:2rem;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.content-card h2{font-size:1.2rem;color:var(--ds-grey);margin-bottom:0.8rem;padding-bottom:0.5rem;border-bottom:2px solid var(--ds-red-light)}
+.content-card h3{font-size:1.02rem;color:var(--ds-red);margin-bottom:0.5rem;margin-top:1rem}
+.content-card p{font-size:0.93rem;color:#3d4550;margin-bottom:0.7rem}
+.content-card .ref{font-size:0.82rem;color:#8b95a1;font-style:italic;margin-bottom:0.5rem}
+.process-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:0.8rem;margin:1.5rem 0}
+.process-step{background:#f9fafb;border-radius:10px;padding:1.2rem 1rem;text-align:center;border-top:4px solid var(--ds-red);position:relative}
+.process-step:nth-child(2){border-top-color:var(--ds-orange)}.process-step:nth-child(3){border-top-color:var(--ds-red)}.process-step:nth-child(4){border-top-color:var(--ds-orange)}
+.process-step .step-icon{font-size:1.8rem;margin-bottom:0.4rem}
+.process-step .step-num{font-size:0.7rem;font-weight:700;color:var(--ds-red);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.2rem}
+.process-step .step-title{font-size:0.95rem;font-weight:700;color:var(--ds-grey);margin-bottom:0.4rem}
+.process-step .step-desc{font-size:0.8rem;color:#5a6270;line-height:1.5}
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.2rem 0;border-radius:10px;overflow:hidden;border:1px solid #e5e7eb}
+.compare-col{padding:1.2rem 1.5rem}.compare-col.traditional{background:#f9fafb}.compare-col.genai{background:#fef9ef}
+.compare-col h3{font-size:0.9rem;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:0.8rem;margin-top:0;padding-bottom:0.4rem;border-bottom:2px solid #e5e7eb}
+.compare-col.traditional h3{color:#6b7280}.compare-col.genai h3{color:var(--ds-red)}
+.compare-col ul{list-style:none;padding:0}.compare-col li{font-size:0.88rem;color:#3d4550;padding:0.35rem 0;padding-left:1.3rem;position:relative}
+.compare-col.traditional li::before{content:"–";position:absolute;left:0;color:#aab2bd}
+.compare-col.genai li::before{content:"✓";position:absolute;left:0;color:var(--ds-red);font-weight:700}
+.cred-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem}
+.cred-item{background:#f9fafb;border-radius:8px;padding:1.2rem;border-left:4px solid var(--ds-red)}
+.cred-item:nth-child(2){border-left-color:var(--ds-orange)}.cred-item:nth-child(3){border-left-color:var(--ds-orange)}.cred-item:nth-child(4){border-left-color:var(--ds-red)}
+.cred-item .cred-title{font-size:0.95rem;font-weight:700;color:var(--ds-grey);margin-bottom:0.3rem}
+.cred-item .cred-desc{font-size:0.85rem;color:#5a6270}
+.org-chart{display:flex;flex-direction:column;align-items:center;margin:1.5rem 0;gap:0.5rem}
+.org-box{background:#f9fafb;border:2px solid var(--ds-red);border-radius:8px;padding:0.8rem 1.5rem;text-align:center;font-size:0.88rem;font-weight:700;color:var(--ds-grey);max-width:400px;width:100%}
+.org-box.head{background:var(--ds-red);color:#fff;border-color:var(--ds-red)}.org-box.head small{font-weight:400;opacity:0.85;display:block;font-size:0.78rem}
+.org-connector{width:2px;height:20px;background:var(--ds-red)}
+.org-row{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.org-row .org-box{border-color:var(--ds-orange);font-weight:600;max-width:260px;font-size:0.84rem}
+.org-row .org-box.phase2{border-style:dashed;color:#8b95a1}
+.principles-list{list-style:none;padding:0;margin-top:1rem}
+.principles-list li{font-size:0.9rem;color:#3d4550;padding:0.5rem 0;padding-left:1.5rem;position:relative;border-bottom:1px solid #f0f0f0}
+.principles-list li:last-child{border-bottom:none}
+.principles-list li::before{content:"▸";position:absolute;left:0;color:var(--ds-red);font-weight:700}
+.principles-list li strong{color:var(--ds-grey)}
+
+/* PAGE 2 */
+.exec-summary{background:#fff;border-radius:10px;padding:1.8rem 2rem;margin-bottom:2.5rem;border-left:5px solid var(--ds-red);box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.exec-summary h2{font-size:1.15rem;color:var(--ds-red);margin-bottom:0.6rem}
+.exec-summary p{font-size:0.95rem;color:#3d4550}
+
+/* TREND MATRIX */
+.trend-matrix{background:#fff;border-radius:10px;padding:1.8rem 2rem;margin-bottom:2.5rem;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.trend-matrix h2{font-size:1.2rem;color:var(--ds-grey);margin-bottom:0.3rem}
+.matrix-subtitle{font-size:0.88rem;color:#8b95a1;margin-bottom:1.5rem}
+.matrix-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.matrix-col-header{color:#fff;font-weight:700;font-size:0.9rem;padding:0.7rem 1rem;border-radius:8px 8px 0 0;text-align:center;letter-spacing:0.03em}
+.trend-card{background:#fff;border:1px solid #e5e7eb;border-left:4px solid #ccc;border-radius:6px;padding:0.9rem 1rem;margin-bottom:0.6rem;transition:all 0.2s ease;cursor:default}
+.trend-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.trend-theme-icon{font-size:1.1rem;margin-bottom:0.2rem}
+.trend-title{font-size:0.88rem;font-weight:700;color:var(--ds-grey);margin-bottom:0.3rem;line-height:1.3}
+.trend-desc{font-size:0.8rem;color:#5a6270;line-height:1.5}
+
+.theme-section{background:#fff;border-radius:10px;padding:1.8rem 2rem 1.5rem;margin-bottom:2rem;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.theme-header{display:flex;align-items:center;gap:0.65rem;margin-bottom:1rem;flex-wrap:wrap}
+.theme-icon{font-size:1.5rem}.theme-title{font-size:1.2rem;font-weight:700;color:var(--ds-grey)}
+.signal-badge{background:var(--ds-red-light);color:var(--ds-red);font-size:0.78rem;font-weight:600;padding:0.25rem 0.7rem;border-radius:12px;border:1px solid rgba(199,53,45,0.2);margin-left:auto}
+.signal-bar-container{margin-bottom:1.1rem}.signal-bar-label{font-size:0.82rem;color:#5a6270;margin-bottom:0.35rem}
+.signal-bar-track{height:8px;background:#e9ecef;border-radius:4px;overflow:hidden}
+.signal-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--ds-orange),var(--ds-red));transition:width 0.4s ease}
+.insight-box{border-radius:8px;padding:1rem 1.25rem;margin-bottom:1rem;font-size:0.92rem}
+.insight-label{font-weight:700;font-size:0.82rem;text-transform:uppercase;letter-spacing:0.04em;margin-bottom:0.35rem}
+.signal-summary{background:#fff5f3;border-left:4px solid var(--ds-red)}.signal-summary .insight-label{color:var(--ds-red)}
+.so-what{background:#fff8f0;border-left:4px solid var(--ds-orange)}.so-what .insight-label{color:#8a6d1b}
+.articles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:0.75rem;margin-top:0.5rem}
+.article-card{background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;padding:0.85rem 1rem}
+.article-title{font-size:0.88rem;font-weight:600;color:var(--ds-red);text-decoration:none;display:block;margin-bottom:0.3rem;line-height:1.35}
+.article-title:hover{color:var(--ds-red-dark);text-decoration:underline}
+.article-meta{display:flex;justify-content:space-between;font-size:0.76rem;color:#8b95a1}
+.more-card{display:flex;align-items:center;justify-content:center;font-style:italic;color:#8b95a1}
+.methodology{background:#fff;border-radius:10px;padding:1.8rem 2rem;margin-bottom:2rem;border-top:3px solid var(--ds-red);box-shadow:0 1px 4px rgba(0,0,0,0.06)}
+.methodology h2{font-size:1.05rem;color:var(--ds-red);margin-bottom:0.6rem}
+.methodology p{font-size:0.88rem;color:#5a6270;margin-bottom:0.5rem}
+.dashboard-footer{text-align:center;padding:2rem 1rem 2.5rem;color:#8b95a1;font-size:0.85rem}
+.dashboard-footer a{color:var(--ds-red);text-decoration:none;font-weight:600}.dashboard-footer a:hover{text-decoration:underline}
+.footer-tagline{font-size:0.78rem;color:#aab2bd;margin-top:0.25rem}
+@media print{body{background:#fff}.dashboard-header,.tab-nav{-webkit-print-color-adjust:exact;print-color-adjust:exact}.theme-section,.methodology,.content-card{break-inside:avoid}}
+@media(max-width:700px){.dashboard-header h1{font-size:1.3rem}.container{padding:1rem 0.75rem 2rem}.process-flow{grid-template-columns:1fr 1fr}.compare-grid{grid-template-columns:1fr}.cred-grid{grid-template-columns:1fr}.articles-grid{grid-template-columns:1fr}.matrix-grid{grid-template-columns:1fr}.org-row{flex-direction:column;align-items:center}.tab-btn{padding:0.7rem 1rem;font-size:0.85rem}}
+</style>
+</head>
+<body>
+
+<header class="dashboard-header">
+    <div class="dashboard-logo">
+        <img src="https://companieslogo.com/img/orig/SMDS.L_BIG-4fdab66c.png?t=1652524665"
+             alt="DS Smith" onerror="this.style.display='none'">
+    </div>
+    <h1>Market Insight &amp; Foresight — DS Smith</h1>
+    <p class="subtitle">Strategic vision and AI-powered signal intelligence</p>
+    <div class="meta-bar">
+        <div class="meta-item"><strong>58</strong> quality signals</div>
+        <div class="meta-item"><strong>6</strong> foresight themes</div>
+        <div class="meta-item"><strong>30-day</strong> scan window</div>
+        <div class="meta-item">Generated <strong>10 June 2026, 00:02</strong></div>
+    </div>
+</header>
+
+<nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('vision')">📋 Strategic Vision</button>
+    <button class="tab-btn" onclick="switchTab('dashboard')">📊 Live Dashboard</button>
+</nav>
+
+<!-- PAGE 1 -->
+<div id="tab-vision" class="tab-content active">
+<div class="container">
+
+    <div class="hero-box">
+        <h2>How I Would Build Market Insight &amp; Foresight at DS Smith</h2>
+        <p class="hero-narrative">
+            What follows is not a theoretical proposal — it is a working demonstration.
+            I built the foresight dashboard you will find in the next tab in a single evening
+            (~75 minutes), using Python, public RSS feeds, and AI-powered categorisation.
+            It scans 12 news vectors, categorises signals into six strategic themes, and
+            generates “So What for DS Smith?” interpretations — automatically.<br><br>
+            This is the kind of capability I have been building and operating at Ageas Group
+            since 2020. Imagine what becomes possible when this approach is embedded within
+            DS Smith, connected to proprietary data, expert networks, and strategic planning
+            workflows.
+        </p>
+        <button class="hero-cta" onclick="switchTab('dashboard')">→ See the live dashboard</button>
+    </div>
+
+    <div class="content-card">
+        <h2>Why Foresight, Why Now</h2>
+        <p>The packaging industry is at an inflection point. Regulatory pressure (the EU PPWR),
+        material innovation, AI-driven manufacturing, and M&amp;A consolidation — including
+        the International Paper–DS Smith combination — are reshaping the landscape simultaneously.
+        These forces are not independent; they interact and amplify each other in ways that
+        traditional competitive intelligence struggles to capture.</p>
+        <p>Traditional market intelligence is <strong>reactive</strong>: it tells you what happened.
+        Strategic foresight is <strong>proactive</strong>: it helps leadership anticipate shifts
+        12–36 months out and position the business ahead of competitors. In an industry where
+        investment cycles are long and switching costs are high, the organisations that see
+        around corners will win.</p>
+        <p class="ref">“Strategic foresight marries cutting-edge analytics with proven creative tools
+        and AI to empower better, more risk-informed strategic thinking.” — BCG, <em>Navigating the
+        Future with Strategic Foresight</em>, January 2025</p>
+        <p class="ref">“AI is beginning to transform how organisations detect, interpret and act
+        on signals of change, offering new capabilities for scanning, analysis and scenario
+        development.” — WEF / OECD, <em>AI in Strategic Foresight</em>, November 2025</p>
+    </div>
+
+    <div class="content-card">
+        <h2>The Foresight Operating Model</h2>
+        <p>A world-class foresight function follows a continuous four-stage cycle.
+        Each stage builds on the previous one, transforming raw data into strategic action.</p>
+        <div class="process-flow">
+            <div class="process-step">
+                <div class="step-icon">📡</div>
+                <div class="step-num">Step 1</div>
+                <div class="step-title">Scan</div>
+                <div class="step-desc">Continuous, AI-powered monitoring of 500+ sources:
+                news, patents, academic papers, regulatory filings, startup activity,
+                social sentiment</div>
+            </div>
+            <div class="process-step">
+                <div class="step-icon">🧠</div>
+                <div class="step-num">Step 2</div>
+                <div class="step-title">Sense</div>
+                <div class="step-desc">Thematic clustering, signal strength assessment,
+                and trend velocity analysis. Distinguishing noise from genuine signals
+                of change</div>
+            </div>
+            <div class="process-step">
+                <div class="step-icon">🎯</div>
+                <div class="step-num">Step 3</div>
+                <div class="step-title">Strategise</div>
+                <div class="step-desc">“So What?” interpretation layer: translating
+                signals into strategic implications for DS Smith’s business lines,
+                geographies, and investment priorities</div>
+            </div>
+            <div class="process-step">
+                <div class="step-icon">🚀</div>
+                <div class="step-num">Step 4</div>
+                <div class="step-title">Act</div>
+                <div class="step-desc">Integration into strategic planning cycles,
+                Board briefings, innovation pipeline, and commercial strategy.
+                Foresight without action is just intelligence</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-card">
+        <h2>The Role of GenAI in Modern Foresight</h2>
+        <div class="compare-grid">
+            <div class="compare-col traditional">
+                <h3>Traditional Foresight</h3>
+                <ul>
+                    <li>Manual horizon scanning (weeks)</li>
+                    <li>Expert-dependent signal detection</li>
+                    <li>Periodic scenario updates (quarterly/annual)</li>
+                    <li>Static reports and presentations</li>
+                    <li>Limited to qualitative sources</li>
+                </ul>
+            </div>
+            <div class="compare-col genai">
+                <h3>GenAI-Enhanced Foresight</h3>
+                <ul>
+                    <li>Real-time automated scanning (continuous)</li>
+                    <li>AI-augmented signal detection at scale</li>
+                    <li>Dynamic, self-updating scenario models</li>
+                    <li>Interactive dashboards with natural-language queries</li>
+                    <li>Multi-modal: text, patents, images, social, regulatory</li>
+                </ul>
+            </div>
+        </div>
+        <p>At Ageas Group, I partnered with <strong>Transition</strong> — an AI-powered
+        foresight platform — to deploy exactly this approach across the Group. We combined
+        automated signal detection with structured expert workshops (2-day Foresight Summits
+        with 30+ external participants) and deep-dive analyses on emerging technologies
+        including blockchain, quantum computing, and data centres. The result: foresight
+        that was both rigorous and actionable, directly informing strategic decisions at
+        Executive Committee level.</p>
+        <p>The dashboard in the next tab demonstrates the <strong>“Scan” and “Sense”</strong>
+        layers of this model, built in ~75 minutes. In a production environment, the full stack
+        would include LLM-powered summarisation (GPT-4 / Claude), proprietary data integration,
+        Slack/Teams alerts, and direct links to strategic planning tools.</p>
+    </div>
+
+    <div class="content-card">
+        <h2>Proposed Organisation Design</h2>
+        <h3>A Lean, High-Impact Foresight Unit</h3>
+        <p>Phase 1 (0–6 months): Foundation — can be stood up with 2–3 FTEs</p>
+        <div class="org-chart">
+            <div class="org-box head">Head of Market Insight &amp; Foresight<small>Reports to Chief Strategy Officer / CEO</small></div>
+            <div class="org-connector"></div>
+            <div class="org-row">
+                <div class="org-box">Foresight Analyst<br><small>Signal scanning, dashboard maintenance, data curation</small></div>
+                <div class="org-box">Industry &amp; Market Analyst<br><small>Competitive intelligence, market sizing, customer insight</small></div>
+                <div class="org-box phase2">[Phase 2] External Network<br><small>Academic partners, expert panels, Summit participants</small></div>
+            </div>
+        </div>
+        <h3>Key Design Principles</h3>
+        <ul class="principles-list">
+            <li><strong>Embedded, not isolated:</strong> Foresight must sit close to strategy, not in a silo. Regular touchpoints with commercial, R&amp;D, and public affairs teams</li>
+            <li><strong>Technology-enabled:</strong> GenAI tools reduce manual effort by 60–70%, allowing a small team to cover broad terrain across geographies and topics</li>
+            <li><strong>Output-oriented:</strong> Every foresight output must answer “So What?” and connect to a decision or action. No insight without implication</li>
+            <li><strong>Cadence-driven:</strong> Weekly signal briefs, monthly theme deep-dives, quarterly strategic scenarios, annual Foresight Summit</li>
+        </ul>
+    </div>
+
+    <div class="content-card">
+        <h2>What I Bring</h2>
+        <div class="cred-grid">
+            <div class="cred-item"><div class="cred-title">🏗️ Built it before</div><div class="cred-desc">Designed and operated Ageas Group’s strategic foresight function end-to-end for 4 years (2020–2024). From concept to Executive Committee integration.</div></div>
+            <div class="cred-item"><div class="cred-title">🤖 Technology-forward</div><div class="cred-desc">Hands-on experience with AI-powered foresight platforms, Python automation, and LLM integration. I build, not just brief.</div></div>
+            <div class="cred-item"><div class="cred-title">🌐 Expert networks</div><div class="cred-desc">Organised 2-day Foresight Summits with 30+ external experts; managed partnerships with specialist foresight providers.</div></div>
+            <div class="cred-item"><div class="cred-title">🎯 Strategic translator</div><div class="cred-desc">Deep-dive analyses on blockchain, quantum computing, and data centres — always connected to business impact and investment decisions.</div></div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!-- PAGE 2 -->
+<div id="tab-dashboard" class="tab-content">
+<div class="container">
+
+    <div class="exec-summary">
+        <h2>Executive Summary</h2>
+        <p>This dashboard aggregates and quality-filters <strong>58 strategic
+        signals</strong> from trusted industry and business sources over the past 30 days,
+        organised across six foresight themes relevant to DS Smith’s strategic agenda.
+        Sources are filtered for credibility (leading packaging trade publications and
+        tier-1 business media). Each theme includes a signal summary and a
+        “So What for DS Smith?” interpretation.</p>
+    </div>
+
+    
+    <section class="trend-matrix">
+        <h2>Strategic Priority Matrix</h2>
+        <p class="matrix-subtitle">15 key trends mapped by action urgency — a starting point for strategic dialogue</p>
+        <div class="matrix-grid">
+            
+            <div class="matrix-col">
+                <div class="matrix-col-header" style="background:#C7352D">
+                    🔴 Act Now
+                </div>
+                
+                <div class="trend-card" style="border-left-color:#C7352D">
+                    <div class="trend-theme-icon">📜</div>
+                    <div class="trend-title">PPWR Compliance &amp; Recyclability Mandates</div>
+                    <div class="trend-desc">The EU Packaging &amp; Packaging Waste Regulation is now in force. DS Smith must ensure all packaging formats meet recyclability-by-design requirements by 2030 and prepare for reuse targets.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#C7352D">
+                    <div class="trend-theme-icon">📊</div>
+                    <div class="trend-title">Post-Acquisition Integration Intelligence</div>
+                    <div class="trend-desc">With the International Paper–DS Smith combination progressing, competitive intelligence on integration synergies, customer retention risks, and market positioning is mission-critical.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#C7352D">
+                    <div class="trend-theme-icon">📦</div>
+                    <div class="trend-title">Right-Sizing &amp; Void Reduction for E-commerce</div>
+                    <div class="trend-desc">Amazon and major retailers are penalising oversized packaging. DS Smith’s PackScore and circular design tools are a direct competitive advantage — accelerate go-to-market.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#C7352D">
+                    <div class="trend-theme-icon">🤖</div>
+                    <div class="trend-title">AI-Powered Quality Control &amp; Predictive Maintenance</div>
+                    <div class="trend-desc">Competitors are deploying AI on production lines to cut waste and downtime. With 300+ manufacturing sites, even marginal gains yield significant ROI at DS Smith’s scale.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#C7352D">
+                    <div class="trend-theme-icon">🌱</div>
+                    <div class="trend-title">Recycled Content Targets &amp; Fibre Sourcing</div>
+                    <div class="trend-desc">Mandatory recycled content thresholds are tightening across the EU. Securing reliable, high-quality recycled fibre supply chains is a near-term strategic imperative.</div>
+                </div>
+            </div>
+            <div class="matrix-col">
+                <div class="matrix-col-header" style="background:#E7AE40">
+                    🟡 Analyse
+                </div>
+                
+                <div class="trend-card" style="border-left-color:#E7AE40">
+                    <div class="trend-theme-icon">📜</div>
+                    <div class="trend-title">National EPR Scheme Divergence</div>
+                    <div class="trend-desc">EU member states are implementing Extended Producer Responsibility differently. Divergent fee structures and collection systems create complexity — and opportunity for compliance-as-a-service.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#E7AE40">
+                    <div class="trend-theme-icon">🌱</div>
+                    <div class="trend-title">Chemical Recycling Scale-Up</div>
+                    <div class="trend-desc">Several chemical recycling technologies are approaching commercial scale. Assess whether strategic partnerships or investments could complement DS Smith’s mechanical recycling capabilities.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#E7AE40">
+                    <div class="trend-theme-icon">📊</div>
+                    <div class="trend-title">Smurfit WestRock &amp; Mondi Capacity Moves</div>
+                    <div class="trend-desc">Key competitors are investing in new capacity and geographic expansion. Map their investment patterns to identify underserved markets or customer segments at risk.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#E7AE40">
+                    <div class="trend-theme-icon">🤖</div>
+                    <div class="trend-title">Digital Twins for Supply Chain Optimisation</div>
+                    <div class="trend-desc">Digital twin technology is maturing rapidly in manufacturing. Evaluate pilot opportunities across DS Smith’s supply chain to model scenarios and reduce lead times.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#E7AE40">
+                    <div class="trend-theme-icon">💡</div>
+                    <div class="trend-title">Fibre-Based Barrier Coatings</div>
+                    <div class="trend-desc">Next-generation aqueous and bio-based barrier coatings are moving from lab to pilot. These could replace plastic-lined packaging — a significant market if DS Smith moves early.</div>
+                </div>
+            </div>
+            <div class="matrix-col">
+                <div class="matrix-col-header" style="background:#6b8e6b">
+                    🟢 Observe
+                </div>
+                
+                <div class="trend-card" style="border-left-color:#6b8e6b">
+                    <div class="trend-theme-icon">💡</div>
+                    <div class="trend-title">Nanocellulose &amp; Advanced Fibre Materials</div>
+                    <div class="trend-desc">Academic research on nanocellulose-reinforced packaging shows promise for high-performance, lightweight formats. Commercialisation horizon: 3–5 years. Monitor university partnerships.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#6b8e6b">
+                    <div class="trend-theme-icon">🤖</div>
+                    <div class="trend-title">Generative AI for Structural Package Design</div>
+                    <div class="trend-desc">Early experiments using GenAI to generate optimised packaging geometries could transform R&amp;D productivity. Still experimental — track leading startups and academic labs.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#6b8e6b">
+                    <div class="trend-theme-icon">🌱</div>
+                    <div class="trend-title">Scope 3 Carbon Accounting Standards</div>
+                    <div class="trend-desc">Emerging standards for supply-chain carbon measurement will eventually require granular packaging lifecycle data. Build measurement capability now to avoid scrambling later.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#6b8e6b">
+                    <div class="trend-theme-icon">📜</div>
+                    <div class="trend-title">Global Plastics Treaty (UNEA)</div>
+                    <div class="trend-desc">UN negotiations on a binding global plastics treaty continue. If adopted, it could create global minimum standards that accelerate demand for fibre-based alternatives.</div>
+                </div>
+                <div class="trend-card" style="border-left-color:#6b8e6b">
+                    <div class="trend-theme-icon">📦</div>
+                    <div class="trend-title">Autonomous &amp; Drone Last-Mile Delivery</div>
+                    <div class="trend-desc">Autonomous delivery is advancing in pilot cities. New delivery formats may require fundamentally different packaging dimensions, durability profiles, and labelling — a 5+ year horizon.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+        <section class="theme-section" id="sustainability">
+            <div class="theme-header">
+                <span class="theme-icon">🌱</span>
+                <h2 class="theme-title">Sustainability &amp; Circular Economy</h2>
+                <span class="signal-badge">21 signals</span>
+            </div>
+            <div class="signal-bar-container">
+                <div class="signal-bar-label">Signal Strength: <strong>Strong</strong></div>
+                <div class="signal-bar-track">
+                    <div class="signal-bar-fill" style="width:90%"></div>
+                </div>
+            </div>
+            <div class="insight-box signal-summary">
+                <div class="insight-label">Signal Summary</div>
+                <p>Over the past 30 days, 21 signals point to continued momentum in sustainability and circularity across the packaging value chain. Public commitments, recycling technology investments, and consumer pressure are converging to accelerate the transition away from single-use plastics.</p>
+            </div>
+            <div class="insight-box so-what">
+                <div class="insight-label">So What for DS Smith?</div>
+                <p>DS Smith’s “Now &amp; Next” sustainability strategy and circular-design principles position it as a natural leader here. Signals in this cluster can be used to validate the roadmap, benchmark against competitors, and identify partnership or acquisition targets in recycling infrastructure.</p>
+            </div>
+            <div class="articles-grid">
+                
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMiSkFVX3lxTE9YenZaZ3VvTjhYYXlTY0I5Z1hta2ZZN0FfSWIydDVqcFphTm5tVnNGSjJETno1bHJOTHBrY1dwTEhNUGdrRXFVM1RB0gFUQVVfeXFMT1gxRzdkZGRLY2RfLWFLb3RMTWtWaUd4bmNLLVNTanFTUEN5OEhNU2tQMEszbFdBQ1VMMU1UZVdBcTE5dlRxZVV0RFl0ZWxDOWsxdDdm?oc=5"
+                       target="_blank" rel="noopener">Sonoco unveils next-generation circular packaging innovations at Interpack as brands accelerate their move to recyclable formats</a>
+                    <div class="article-meta">
+                        <span class="article-source">Sustainable Packaging News</span>
+                        <span class="article-date">13 May 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMiyAFBVV95cUxOd2FBUjlYZG1VTUN4c3dOZ3FSRHlqcnlVX2pBZFNhZDJ0RXo2b0NrUmQ5MGpYQ2ZiT3FTXzI4UWFVaTY2QXJqdEI0TnNkN3V3X3RDTWt6cnB4T3NHNFpuZ1pIZ1ZPVVBwWXcyaHNUaXotZ3BldGlSRm9kbm5ZZExzeW9PWU1YRVNEVjNyQ2N4MF9OdXpSWU83bFZid1FRX3FZSmdEbE9lLW55S2ZYT0lCNExZRmU3aWxiTkJMcDdwMjJXd1NHb0hoMA?oc=5"
+                       target="_blank" rel="noopener">Circular Wall-mounted Dispenser System From: Meadow</a>
+                    <div class="article-meta">
+                        <span class="article-source">Packaging World</span>
+                        <span class="article-date">09 Jun 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMiWkFVX3lxTE1YZDZOeGlJX1Y3dGQ0T2txcTdtcjhDSEtfX09WNFp4Sk1FUjdwYUJfeFN3bjVuVFNMOHh3VjlWQ0s2bnY5Ulp4MlJRMEdpVGRiN2lZZktCT2ZGd9IBZEFVX3lxTE1JYWRYcDUwTVV0b1daMHE1SWU5VDdJemxCalk3ZlFBLTBiRFBjbUJscjRoMWVHZ2xiSHQ3LWRSemxvb2RuS0ZLTTFaSkh0Q1FFSjBwT1B2cm4za3FlOXg2eTZqY1Y?oc=5"
+                       target="_blank" rel="noopener">Elopak launches low-carbon aluminium for liquid packaging cartons</a>
+                    <div class="article-meta">
+                        <span class="article-source">Sustainable Packaging News</span>
+                        <span class="article-date">09 Jun 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMingFBVV95cUxNZ1NYdjZSN2g2RDNucEtCYVN3MDZjeUpJd0V5VFR4dGdjT3MyWnVSWFhDTV85V21ZWnB0UnVZdVh4OTFRSG1PZXJoWGNfZ0g3bTlDSTUzU1cwVjVaOVlFcWZWMFBOM3dEQWhBSGg0TjgwTFRoRVo3ZTc4UUpWdkpGc2MzUmI0MWFqSDNEclVYZ1FfRHpyN2VJN2VNSHZ6Zw?oc=5"
+                       target="_blank" rel="noopener">Hygiene Packaging Films Achieve 35% Recycled Content Goal</a>
+                    <div class="article-meta">
+                        <span class="article-source">PlasticsToday</span>
+                        <span class="article-date">08 Jun 2026</span>
+                    </div>
+                </div>
+                <div class="article-card more-card">
+                    <span class="more-label">+ 17 more signals in this theme</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class="theme-section" id="digital_ai">
+            <div class="theme-header">
+                <span class="theme-icon">🤖</span>
+                <h2 class="theme-title">Digital &amp; AI in Packaging</h2>
+                <span class="signal-badge">0 signals</span>
+            </div>
+            <div class="signal-bar-container">
+                <div class="signal-bar-label">Signal Strength: <strong>Weak</strong></div>
+                <div class="signal-bar-track">
+                    <div class="signal-bar-fill" style="width:8%"></div>
+                </div>
+            </div>
+            <div class="insight-box signal-summary">
+                <div class="insight-label">Signal Summary</div>
+                <p>0 recent signals indicate growing adoption of AI and digital technologies in packaging manufacturing and supply-chain management. Use cases range from predictive maintenance to generative design, with pilot programmes increasingly moving to production scale.</p>
+            </div>
+            <div class="insight-box so-what">
+                <div class="insight-label">So What for DS Smith?</div>
+                <p>With 65,000+ employees and a large manufacturing footprint, DS Smith can unlock significant value through AI-driven quality control, predictive maintenance, and demand sensing. These signals highlight where competitors are investing — and where first-mover advantage is still available.</p>
+            </div>
+            <div class="articles-grid">
+                
+            </div>
+        </section>
+        
+        <section class="theme-section" id="ecommerce">
+            <div class="theme-header">
+                <span class="theme-icon">📦</span>
+                <h2 class="theme-title">E-commerce &amp; Consumer Shifts</h2>
+                <span class="signal-badge">4 signals</span>
+            </div>
+            <div class="signal-bar-container">
+                <div class="signal-bar-label">Signal Strength: <strong>Emerging</strong></div>
+                <div class="signal-bar-track">
+                    <div class="signal-bar-fill" style="width:17%"></div>
+                </div>
+            </div>
+            <div class="insight-box signal-summary">
+                <div class="insight-label">Signal Summary</div>
+                <p>4 signals captured in this theme reflect the ongoing evolution of e-commerce packaging requirements. Right-sizing, damage reduction, and sustainable alternatives to plastic mailers are recurring topics.</p>
+            </div>
+            <div class="insight-box so-what">
+                <div class="insight-label">So What for DS Smith?</div>
+                <p>E-commerce remains DS Smith’s largest growth vector. Tracking shifts in consumer expectations — from right-sized packaging to premium unboxing — helps the commercial team refine value propositions and co-create solutions with key accounts.</p>
+            </div>
+            <div class="articles-grid">
+                
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMifEFVX3lxTE5jZll6bkRZRUdQT1k4OVRNTEVuRlRtcVJyakZ1cUhxUl9Kc21wN0lkcllSNFV0YUVFY3NpMFZZaXlRWEVDdUUxVnROajdkVGxJWXRsdzZOTG9oaF9jNDdDODhCOXVvWTBzR1kybkNzYnNUYzMwNHhtSWtEQ1PSAYIBQVVfeXFMUG9tOWEwSFY5cGhlOFB5YVJiNjgxbHloczdFb1BSVHNCaTE5SG94NXlEUXVHTlBRNm8zdmVMSVhKaW1NMWZCbHRaZFFEYXJETzNPamtuU2theUF6d1U1LVVrUUFmbTRsOEVSQ3lUVzFNR3pwUjlYU05mSlc1WENPLTFYZw?oc=5"
+                       target="_blank" rel="noopener">Amazon starts selling its AI shopping technology to other retailers</a>
+                    <div class="article-meta">
+                        <span class="article-source">CNBC</span>
+                        <span class="article-date">27 May 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMiiwFBVV95cUxOdVVleWlSY2IyMFk2QTdxdGJaa2xqRE8zQm5yQmIzWnVoM2taa1otbnhaNDl4SG9BR0xkaVhrM0lkaXUwM280YUQ5dlNHNXB6aGdSNzZHV1E3Smt6UGQxSFg5S0tQbFlSd2lKYnVYMEo0Tnc5YnZST1RTbjBYRUlKODBQTFFzVnlEQUNB?oc=5"
+                       target="_blank" rel="noopener">Consumer Electronic Packaging Market Size, Forecast, 2034</a>
+                    <div class="article-meta">
+                        <span class="article-source">Fortune Business Insights</span>
+                        <span class="article-date">18 May 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMi5gFBVV95cUxQZUZYNDNBMDNTQzJPNExJYnI4MlI5NzQ3LW1sWGFqdVRTTXBwekRPRVY0YlFTMW5NMV9YZHpyalZfWk9GbE1oaDRmV3pVM3dCN25OY2ZjckxrclZ4RXRoZmtGLTR0cTNiYmhaMll3ODFWSFc3amNTR3AyYUlZTHp2cHdja0FPNjg4TzlGWFpnblExaHFORi1FLXpNSVUtUWZBM0pYclFMQWRwaDdTczF3cXBvN05TRGk5ekE2XzA4eXBfUy1KUHdFaHJzc1hHQllTaTUxVlhTeENOU2wySVpsWUlQRXpUZw?oc=5"
+                       target="_blank" rel="noopener">What Walmart, Amazon, and Google Know About the Future of Safe Package Transit</a>
+                    <div class="article-meta">
+                        <span class="article-source">Packaging World</span>
+                        <span class="article-date">11 May 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMiggFBVV95cUxPYWhWUmRLMFh6aDk3VVQ0ZE9rR012UjZNT1RUalkwYlhlaFgtX2lyV2FBd282V2d1cFJTVlpSSmhMT0FlZmNicUtsU3Z3RWVCLUFFUFczeC0xRFhWQ0FfWGp2dWVBNXRBRUVEVmtyakdzTkVVTXl3ZHlkXzBFd1lkOUl3?oc=5"
+                       target="_blank" rel="noopener">Retail Ready Packaging Market Size, Analysis &amp; Share [2034]</a>
+                    <div class="article-meta">
+                        <span class="article-source">Fortune Business Insights</span>
+                        <span class="article-date">11 May 2026</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="theme-section" id="regulation">
+            <div class="theme-header">
+                <span class="theme-icon">📜</span>
+                <h2 class="theme-title">Regulation &amp; Policy</h2>
+                <span class="signal-badge">9 signals</span>
+            </div>
+            <div class="signal-bar-container">
+                <div class="signal-bar-label">Signal Strength: <strong>Moderate</strong></div>
+                <div class="signal-bar-track">
+                    <div class="signal-bar-fill" style="width:38%"></div>
+                </div>
+            </div>
+            <div class="insight-box signal-summary">
+                <div class="insight-label">Signal Summary</div>
+                <p>9 regulatory and policy signals have been detected. The EU PPWR trilogue outcomes, national plastic taxes, and EPR scheme reforms dominate the agenda, creating both compliance obligations and commercial opportunities for fibre-based solutions.</p>
+            </div>
+            <div class="insight-box so-what">
+                <div class="insight-label">So What for DS Smith?</div>
+                <p>The EU Packaging &amp; Packaging Waste Regulation (PPWR) will reshape the competitive landscape. DS Smith’s fibre-based portfolio is well-aligned, but tracking implementation timelines, national transpositions, and lobbying positions of competitors is critical for Public Affairs and Product Development.</p>
+            </div>
+            <div class="articles-grid">
+                
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMisAFBVV95cUxOajRUUjlOODBRRnVkTUdHeTlBcmFrcVAwOHVYT2RYNzRsUF9mbnFmQzk2V1FNeFJscHZJUVc1QVQwRHNiaTlzZWl6MDNhZktkYWkybnhNbXN0cXNJREJZZ0hVNDZZZ21oMTdncjljd3pESnBNZkRYb21jMmJySHg5UFNQVEVMZWxsZDgyZF9meDlacUN6bTNWbVdhUWFDRWtLTnczSTR0OFFRZzJkUUtHRg?oc=5"
+                       target="_blank" rel="noopener">EU Commission withdraws detailed opinion on German packaging law</a>
+                    <div class="article-meta">
+                        <span class="article-source">Packaging Europe</span>
+                        <span class="article-date">05 Jun 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMivgFBVV95cUxNcVQzS3l1VWpCMlBDQUpDVHJpd2VtQ2ptUFRuRFlGZ0tsWEczTzRmX1lhWm1xS21NdFZFenIxLUJvV2JrQld3eW1EY3FKUUEzRnpobzBwZGQ2SjBDcHN2NXJ6dzU0eU9HemRlWGZGQTBOMlJRSlZkUXd0R002N2Z0TVZUaUNPeHVUWFZBWkd5d1UzdkVOM0xpTlluS3MxYVZEaWFsS0taZzkxZkFxQmtLZ1QxNzN0cUhVUGlSX0Zn?oc=5"
+                       target="_blank" rel="noopener">How the EU Commission plans to regulate biobased feedstock in the PPWR</a>
+                    <div class="article-meta">
+                        <span class="article-source">Packaging Europe</span>
+                        <span class="article-date">28 May 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMiiwFBVV95cUxOOXpvVkV4LWxIZXNtWEFxeERiTGhCMkhkM0w0VWpwdktsVjNIM25jX3hqbmhrS3dhNTRCazFiSy1fV0c4bnk1Z3pYYWJWeWVFRmZJbGZYQjRUODltSDlHOWgxZFFPNUh2RVJ3TFNJQzNzSWR5NEhXaHh5TUNFT1lLV0VnZkV3elhhbGdN?oc=5"
+                       target="_blank" rel="noopener">How to get prepared for the PPWR</a>
+                    <div class="article-meta">
+                        <span class="article-source">Packaging Europe</span>
+                        <span class="article-date">27 May 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMiowFBVV95cUxQWjdOZVdtaHR5TlNVS2hKdTlfYklBREkyeGM2Yk1vdzlWZ0ZWZ1d2ajU0VzA2QzNHUkR4a1JpYlN4clhrcVE0aTlmd1ZlYTAxQ2JiYk03UzVJdFd1YThJXzBUVWFKRkpfUzZFVDN3cERYRW9HZ2dUaHpRcmZDYUNYdEpndkNUQ0dPUm5XN0FoRElUQjMtT2x5LUp1cnZUV3R3V2Vv?oc=5"
+                       target="_blank" rel="noopener">Preparing for PPWR without waiting for every detail</a>
+                    <div class="article-meta">
+                        <span class="article-source">Packaging Europe</span>
+                        <span class="article-date">20 May 2026</span>
+                    </div>
+                </div>
+                <div class="article-card more-card">
+                    <span class="more-label">+ 5 more signals in this theme</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class="theme-section" id="innovation">
+            <div class="theme-header">
+                <span class="theme-icon">💡</span>
+                <h2 class="theme-title">Innovation &amp; Materials</h2>
+                <span class="signal-badge">1 signal</span>
+            </div>
+            <div class="signal-bar-container">
+                <div class="signal-bar-label">Signal Strength: <strong>Weak</strong></div>
+                <div class="signal-bar-track">
+                    <div class="signal-bar-fill" style="width:8%"></div>
+                </div>
+            </div>
+            <div class="insight-box signal-summary">
+                <div class="insight-label">Signal Summary</div>
+                <p>1 innovation signals highlight advances in barrier coatings, bio-based materials, and lightweight fibre structures. Several developments are moving from lab to pilot, suggesting commercialisation windows of 12–24 months.</p>
+            </div>
+            <div class="insight-box so-what">
+                <div class="insight-label">So What for DS Smith?</div>
+                <p>DS Smith’s R&amp;D centres and university partnerships should monitor these signals closely. Breakthrough barrier coatings and fibre-based alternatives to plastic trays represent high-value opportunities that could be fast-tracked through the innovation pipeline.</p>
+            </div>
+            <div class="articles-grid">
+                
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMihgJBVV95cUxOMW5wcXhjT0xEU2JwREZuZy1DeHgwNExsSVUwbXNQMjlnYlMwTU5CLUFWS1dmVWRESmFhWGQ0cmdYTVBRNi1feWNYd3ZoS2pNRG52bk1TMXY3Tk9ZNUN1SHZUYVF2c1FGNklYRVJvLV9ESWh0aExGNG9YXzdYTnFkc1ZDZThOVkdTcThBSkpTMEZxMDBTMjdiR09RV2xZQWlhMGZJT19Tc2VITXF6Z1U5TnZLaWQxMmhIQ3htNXBrUlZpbVZpNUx2MGN2LTBWdkxmN0t6M3kyWEMxRUFxWDcyek5nSUFNWHJjZUFWSlFDY1RYN0RhakFuVE9JcE50ODZwSy1BUWZn?oc=5"
+                       target="_blank" rel="noopener">Digital Solution for Real-time Packaging Material Consumption Tracking From: Storopack</a>
+                    <div class="article-meta">
+                        <span class="article-source">Packaging World</span>
+                        <span class="article-date">14 May 2026</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="theme-section" id="market">
+            <div class="theme-header">
+                <span class="theme-icon">📊</span>
+                <h2 class="theme-title">Market Dynamics &amp; Competition</h2>
+                <span class="signal-badge">23 signals</span>
+            </div>
+            <div class="signal-bar-container">
+                <div class="signal-bar-label">Signal Strength: <strong>Strong</strong></div>
+                <div class="signal-bar-track">
+                    <div class="signal-bar-fill" style="width:99%"></div>
+                </div>
+            </div>
+            <div class="insight-box signal-summary">
+                <div class="insight-label">Signal Summary</div>
+                <p>23 market and competitive signals reflect an industry in active consolidation. M&amp;A activity, quarterly earnings reports, and capacity investments are reshaping the competitive map across EMEA.</p>
+            </div>
+            <div class="insight-box so-what">
+                <div class="insight-label">So What for DS Smith?</div>
+                <p>The proposed International Paper–DS Smith combination makes competitive intelligence in this cluster especially critical. Monitoring analyst sentiment, regulatory approvals, and strategic moves by Smurfit Kappa, Mondi, and Stora Enso helps the leadership team anticipate market shifts and stakeholder questions.</p>
+            </div>
+            <div class="articles-grid">
+                
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMieEFVX3lxTE94RmpsRVJNc3ZZQ0luRkd5b2xnSjd0b0NMRUVuU3EyYnR4NmxzUVJRVVlnRmhJbWExN0VNMzhjdk51Vzd3bWNlNDRsYzhqWDhRdkpEXzR3R2E3Y2ttM3kxZkFvNUhHVE12NXdGaFdCR2JMdjBoZjhXbA?oc=5"
+                       target="_blank" rel="noopener">Green Packaging Market Size, Share | Growth Forecast [2034]</a>
+                    <div class="article-meta">
+                        <span class="article-source">Fortune Business Insights</span>
+                        <span class="article-date">18 May 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMidkFVX3lxTFBXZXhtUFczWHhyeTJiTGNPOTVEbWp5QkZXQW9lME84dXlPcG01UDZoaW5BSW1JMi1va3RaUHdrQVJvRGxrUFNfS1V5WDNVdWRESnVJVkw0b2hnVnV0ejZKV1VSREZLNjJZVkNQd3dKcUNTdnlTRVE?oc=5"
+                       target="_blank" rel="noopener">Aluminum Foil Market Size, Share | Growth Forecast [2026-2034]</a>
+                    <div class="article-meta">
+                        <span class="article-source">Fortune Business Insights</span>
+                        <span class="article-date">18 May 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMib0FVX3lxTE5LZXAtS1pfaVczc3cwcHoxbVNVQmd2UjNPV3g5V3d1WkdGZ2ZfMGNySE10ZUhMcC1rY016dmdOSk5Za3VSUmtZWG9uT00xLXpPY29LYjk3NlNtNFFzSWtJMk9aaU9JXzgwZkdSVmZRWQ?oc=5"
+                       target="_blank" rel="noopener">Air Care Market Size, Share, Trends, Growth, Forecast to 2034</a>
+                    <div class="article-meta">
+                        <span class="article-source">Fortune Business Insights</span>
+                        <span class="article-date">18 May 2026</span>
+                    </div>
+                </div>
+                <div class="article-card">
+                    <a class="article-title" href="https://news.google.com/rss/articles/CBMifkFVX3lxTFBoTlkwVDBFSVNkbXJxRm4tbTJJNHE2MWxaODgycXVQZ0RQSXBvUnVsemNHZTR5eDF3ZkdMQzhhYXB6bGxid2FFY2poUENhUUxLNmdlRllkRlB3My02MnBRa1NzOUxSclh4Z3JrMGVHNTBmSk1VTDRqTFRKVW4xdw?oc=5"
+                       target="_blank" rel="noopener">Connected Packaging Market Size, Industry Share | Forecast, 2034</a>
+                    <div class="article-meta">
+                        <span class="article-source">Fortune Business Insights</span>
+                        <span class="article-date">18 May 2026</span>
+                    </div>
+                </div>
+                <div class="article-card more-card">
+                    <span class="more-label">+ 19 more signals in this theme</span>
+                </div>
+            </div>
+        </section>
+        
+
+    <div class="methodology">
+        <h2>Methodology</h2>
+        <p><strong>Data collection:</strong> Python-based automated scanning of
+        Google News RSS feeds using 12 curated search queries. Articles are
+        deduplicated by normalised headline.</p>
+        <p><strong>Source quality filter:</strong> Only articles from trusted industry
+        publications (Packaging Dive, Packaging World, Packaging Europe, etc.) and
+        tier-1 business media (Financial Times, Reuters, Bloomberg, etc.) are retained.
+        Articles must match at least 2 theme keywords to qualify.</p>
+        <p><strong>Strategic Priority Matrix:</strong> 15 key trends curated from signal
+        analysis and mapped to an Act / Analyse / Observe framework to guide
+        strategic prioritisation and resource allocation.</p>
+        <p><strong>Scaling this capability:</strong> In a production environment,
+        this dashboard would be enhanced with LLM-powered summarisation,
+        proprietary data sources, automated Slack/Teams alerts, and
+        integration with strategic planning workflows.</p>
+    </div>
+
+</div>
+</div>
+
+<footer class="dashboard-footer">
+    <p>Built by <a href="https://www.linkedin.com/in/ernesto-zaccaria/"
+       target="_blank" rel="noopener">Ernesto Zaccaria</a></p>
+    <p class="footer-tagline">Strategic Foresight &amp; AI-Powered Intelligence</p>
+</footer>
+
+<script>
+function switchTab(tab){
+    document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el=>el.classList.remove('active'));
+    if(tab==='vision'){document.getElementById('tab-vision').classList.add('active');document.querySelectorAll('.tab-btn')[0].classList.add('active')}
+    else{document.getElementById('tab-dashboard').classList.add('active');document.querySelectorAll('.tab-btn')[1].classList.add('active')}
+    window.scrollTo(0,0);
+}
+</script>
+
+</body>
+</html>
